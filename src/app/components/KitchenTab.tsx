@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from '../page.module.css';
+import { API_URL } from '../constants';
 
 interface KitchenTabProps {
   orders?: any[];
@@ -9,7 +10,7 @@ interface KitchenTabProps {
 export const KitchenTab = ({ orders = [], onRefresh }: KitchenTabProps) => {
   const updateStatus = async (orderId: string, status: string) => {
     try {
-      const res = await fetch(`http://192.168.1.186:3000/merchant/orders/${orderId}/status`, {
+      const res = await fetch(`${API_URL}/merchant/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })

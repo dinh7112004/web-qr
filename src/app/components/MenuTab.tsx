@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../page.module.css';
+import { API_URL } from '../constants';
 import { Icon } from './Icon';
 
 interface MenuItem {
@@ -45,7 +46,7 @@ export const MenuTab = () => {
 
   const fetchItems = async () => {
     try {
-      const res = await fetch('http://192.168.1.186:3000/merchant/menu/items?storeId=store-genz-01&includeInactive=true');
+      const res = await fetch(`${API_URL}/merchant/menu/items?storeId=store-genz-01&includeInactive=true`);
       const data = await res.json();
       
       if (data.items) {
@@ -66,7 +67,7 @@ export const MenuTab = () => {
         setItems(formattedItems);
       }
       
-      const metricsRes = await fetch('http://192.168.1.186:3000/merchant/metrics?storeId=store-genz-01');
+      const metricsRes = await fetch(`${API_URL}/merchant/metrics?storeId=store-genz-01`);
       const metricsData = await metricsRes.json();
       if (metricsData) {
         setMetrics(metricsData);
@@ -80,7 +81,7 @@ export const MenuTab = () => {
 
   const handleManualStoryTag = async () => {
     try {
-      await fetch('http://192.168.1.186:3000/merchant/metrics/story-tag', {
+      await fetch(`${API_URL}/merchant/metrics/story-tag`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ storeId: 'store-genz-01', username: 'manual-entry' })
@@ -104,7 +105,7 @@ export const MenuTab = () => {
   const toggleItem = async (id: string, currentStatus: boolean) => {
     setItems(items.map(item => item.id === id ? { ...item, isActive: !currentStatus } : item));
     try {
-      await fetch(`http://192.168.1.186:3000/merchant/menu/items/${id}/toggle-active`, {
+      await fetch(`${API_URL}/merchant/menu/items/${id}/toggle-active`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isActive: !currentStatus })
@@ -117,7 +118,7 @@ export const MenuTab = () => {
   const deleteItem = async (id: string) => {
     if (!confirm('Bestie chắc chắn muốn xoá món này chứ? 🥺')) return;
     try {
-      await fetch(`http://192.168.1.186:3000/merchant/menu/items/${id}/delete`, { method: 'POST' });
+      await fetch(`${API_URL}/merchant/menu/items/${id}/delete`, { method: 'POST' });
       setItems(items.filter(item => item.id !== id));
     } catch (error) {
       console.error("Failed to delete item:", error);
@@ -159,7 +160,7 @@ export const MenuTab = () => {
           isActive: newItem.status === 'active'
         };
         
-        res = await fetch(`http://192.168.1.186:3000/merchant/menu/items/${editItemId}`, {
+        res = await fetch(`${API_URL}/merchant/menu/items/${editItemId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -177,7 +178,7 @@ export const MenuTab = () => {
           isActive: newItem.status === 'active'
         };
         
-        res = await fetch('http://192.168.1.186:3000/merchant/menu/items', {
+        res = await fetch(`${API_URL}/merchant/menu/items`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)

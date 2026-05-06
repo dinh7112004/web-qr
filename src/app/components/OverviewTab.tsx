@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../page.module.css';
+import { API_URL } from '../constants';
 
 interface Stat {
   label: string;
@@ -111,7 +112,7 @@ export const OverviewTab = ({ orders: rawOrders = [], onRefresh, autoRefresh = t
 
   const updateOrderStatus = async (orderId: string, status: string, note: string = '') => {
     try {
-      const res = await fetch(`http://192.168.1.186:3000/merchant/orders/${orderId}/status`, {
+      const res = await fetch(`${API_URL}/merchant/orders/${orderId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status, note })

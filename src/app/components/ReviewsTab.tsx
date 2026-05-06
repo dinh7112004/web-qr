@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../page.module.css';
+import { API_URL } from '../constants';
 
 export const ReviewsTab = () => {
   const [reviews, setReviews] = useState<any[]>([]);
@@ -8,7 +9,7 @@ export const ReviewsTab = () => {
 
   const fetchReviews = async () => {
     try {
-      const res = await fetch('http://192.168.1.186:3000/merchant/reviews?storeId=store-genz-01');
+      const res = await fetch(`${API_URL}/merchant/reviews?storeId=store-genz-01`);
       const data = await res.json();
       if (data.items) {
         setReviews(data.items);
@@ -29,7 +30,7 @@ export const ReviewsTab = () => {
   const handleReply = async (id: string) => {
     if (!replyText[id]?.trim()) return;
     try {
-      await fetch(`http://192.168.1.186:3000/merchant/reviews/${id}/reply`, {
+      await fetch(`${API_URL}/merchant/reviews/${id}/reply`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reply: replyText[id] })

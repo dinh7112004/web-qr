@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from '../page.module.css';
+import { API_URL } from '../constants';
 import { QRCodeSVG } from 'qrcode.react';
 
 export const TablesTab = ({ orders = [] }: { orders?: any[] }) => {
@@ -48,7 +49,7 @@ export const TablesTab = ({ orders = [] }: { orders?: any[] }) => {
 
     try {
       for (const order of activeOrders) {
-        await fetch(`http://192.168.1.186:3000/merchant/orders/${order.orderId}/status`, {
+        await fetch(`${API_URL}/merchant/orders/${order.orderId}/status`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: 'completed' })

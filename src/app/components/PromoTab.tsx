@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../page.module.css';
+import { API_URL } from '../constants';
 
 export const PromoTab = ({ showModalOverride, onHide }: { showModalOverride?: boolean, onHide?: () => void }) => {
   const [vouchers, setVouchers] = useState<any[]>([]);
@@ -30,7 +31,7 @@ export const PromoTab = ({ showModalOverride, onHide }: { showModalOverride?: bo
   const fetchVouchers = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://192.168.1.186:3000/merchant/vouchers');
+      const res = await fetch(`${API_URL}/merchant/vouchers`);
       const data = await res.json();
       setVouchers(data.items || []);
     } catch (err) {
@@ -46,7 +47,7 @@ export const PromoTab = ({ showModalOverride, onHide }: { showModalOverride?: bo
 
   const handleToggle = async (id: string, currentStatus: boolean) => {
     try {
-      await fetch(`http://192.168.1.186:3000/merchant/vouchers/${id}/toggle-active`, {
+      await fetch(`${API_URL}/merchant/vouchers/${id}/toggle-active`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isActive: !currentStatus })
@@ -64,7 +65,7 @@ export const PromoTab = ({ showModalOverride, onHide }: { showModalOverride?: bo
     }
     
     try {
-      await fetch('http://192.168.1.186:3000/merchant/vouchers', {
+      await fetch(`${API_URL}/merchant/vouchers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './page.module.css';
+import { API_URL } from './constants';
 import { Sidebar } from './components/Sidebar';
 import { OverviewTab } from './components/OverviewTab';
 import { MenuTab } from './components/MenuTab';
@@ -23,7 +24,7 @@ export default function Dashboard() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch('http://192.168.1.186:3000/merchant/orders?storeId=store-genz-01');
+      const res = await fetch(`${API_URL}/merchant/orders?storeId=store-genz-01`);
       const data = await res.json();
       if (data.items) {
         setOrders(data.items);
