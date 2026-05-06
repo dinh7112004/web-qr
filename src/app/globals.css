@@ -1,0 +1,84 @@
+:root {
+  /* Boba Babe Color Palette */
+  --hot: #FF4D8D;
+  --lavn: #D6BCFA;
+  --mint: #B2F2BB;
+  --peach: #FFE4E1;
+  --paper: #FDFBF7;
+  --ink: #1A1A1A;
+  
+  /* Backgrounds */
+  --bg-sidebar: #FFFFFF;
+  --bg-main: #FFF5F2;
+  
+  /* Typography */
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-body: 'Quicksand', sans-serif;
+  
+  /* Effects */
+  --shadow-sm: 0 4px 0 rgba(26, 26, 26, 1);
+  --shadow-md: 0 8px 0 rgba(26, 26, 26, 1);
+  --radius-lg: 32px;
+  --radius-md: 20px;
+  --radius-sm: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background-color: var(--bg-main);
+  overflow: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-display);
+  transition: all 0.2s ease;
+}
+
+button:active {
+  transform: translateY(4px);
+  box-shadow: none !important;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(26, 26, 26, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(26, 26, 26, 0.2);
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.float-anim {
+  animation: float 3s ease-in-out infinite;
+}

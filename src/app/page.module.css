@@ -1,0 +1,664 @@
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--bg-main);
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: 280px;
+  background-color: var(--bg-sidebar);
+  border-right: 3px solid var(--ink);
+  display: flex;
+  flex-direction: column;
+  padding: 40px 20px;
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 50px;
+  padding-left: 10px;
+}
+
+.logo {
+  width: 48px;
+  height: 48px;
+  background-color: var(--hot);
+  border-radius: 14px;
+  border: 2.5px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.brandInfo h2 {
+  font-size: 18px;
+  color: var(--ink);
+}
+
+.brandInfo p {
+  font-size: 12px;
+  color: rgba(26, 26, 26, 0.5);
+  font-weight: 600;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.navLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(26, 26, 26, 0.4);
+  font-weight: 800;
+  margin: 20px 0 10px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  text-decoration: none;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.navItem:hover {
+  background-color: var(--peach);
+}
+
+.navItemActive {
+  background-color: var(--hot);
+  color: #fff;
+  border: 2.5px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.badge {
+  background-color: var(--hot);
+  color: #fff;
+  font-size: 11px;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  border: 2px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  margin-left: auto;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+/* Main Content Styles */
+.main {
+  flex: 1;
+  padding: 40px 60px;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+}
+
+.headerTitle h1 {
+  font-size: 40px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerTitle p {
+  font-weight: 600;
+  color: rgba(26, 26, 26, 0.5);
+  font-size: 15px;
+}
+
+.headerActions {
+  display: flex;
+  gap: 16px;
+}
+
+.btnPrimary {
+  background-color: var(--hot);
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 20px;
+  font-weight: 800;
+  border: 2.5px solid var(--ink);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btnSecondary {
+  background-color: #fff;
+  color: var(--ink);
+  padding: 14px 28px;
+  border-radius: 20px;
+  font-weight: 800;
+  border: 2.5px solid var(--ink);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.statCard {
+  padding: 30px;
+  border-radius: 28px;
+  border: 2.5px solid var(--ink);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.statLabel {
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 15px;
+  color: rgba(26, 26, 26, 0.7);
+}
+
+.statValue {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.statTrend {
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Insight Banner */
+.insightBanner {
+  background-color: var(--paper);
+  border: 2.5px solid var(--ink);
+  border-radius: 24px;
+  padding: 24px 30px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 40px;
+  box-shadow: var(--shadow-sm);
+  background-image: linear-gradient(135deg, transparent 80%, var(--lavn) 80%);
+}
+
+.botIcon {
+  width: 60px;
+  height: 60px;
+  background-color: #fff;
+  border: 2.5px solid var(--ink);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.insightText h3 {
+  font-size: 18px;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+
+.insightText p {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(26, 26, 26, 0.6);
+  max-width: 600px;
+}
+
+.btnCreate {
+  margin-left: auto;
+  background-color: var(--mint);
+  padding: 12px 24px;
+  border-radius: 16px;
+  border: 2.5px solid var(--ink);
+  font-weight: 800;
+  box-shadow: 4px 4px 0 var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Table Section */
+.tableSection {
+  background-color: #fff;
+  border: 2.5px solid var(--ink);
+  border-radius: 32px;
+  padding: 30px;
+  box-shadow: var(--shadow-md);
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.tableHeader h2 {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.searchBar {
+  background-color: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 300px;
+}
+
+.searchBar input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-body);
+  font-weight: 600;
+  width: 100%;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: 15px 10px;
+  border-bottom: 1.5px solid rgba(26, 26, 26, 0.05);
+}
+
+.menuItem:last-child {
+  border-bottom: none;
+}
+
+.itemImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  border: 2px solid var(--ink);
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.itemInfo {
+  flex: 1;
+}
+
+.itemNameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.itemName {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.itemBadge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1.5px solid var(--ink);
+  text-transform: uppercase;
+}
+
+.itemSub {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(26, 26, 26, 0.4);
+}
+
+.itemPrice {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--hot);
+  width: 100px;
+  text-align: right;
+}
+
+.itemSales {
+  width: 100px;
+  text-align: center;
+}
+
+.salesLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(26, 26, 26, 0.4);
+}
+
+.salesValue {
+  font-weight: 800;
+  font-size: 14px;
+}
+
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  width: 50px;
+  height: 28px;
+  background-color: var(--mint);
+  border: 2.5px solid var(--ink);
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.toggleCircle {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  background-color: #fff;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+/* Modal Gen-Z Style */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(26, 26, 26, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modalContent {
+  background-color: var(--paper);
+  width: 90%;
+  max-width: 600px;
+  border-radius: 32px;
+  border: 3px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--ink);
+  padding: 40px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 3px dashed var(--ink);
+}
+
+.modalHeader h3 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--ink);
+  margin: 0;
+}
+
+.btnClose {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background-color: #fff;
+  border: 2.5px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: all 0.2s;
+}
+
+.btnClose:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.formGroup {
+  margin-bottom: 24px;
+}
+
+.formLabel {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.formInput, .formSelect, .formTextarea {
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  border: 2.5px solid var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  background-color: #fff;
+  transition: all 0.2s;
+}
+
+.formInput:focus, .formSelect:focus, .formTextarea:focus {
+  outline: none;
+  border-color: var(--hot);
+  box-shadow: 4px 4px 0 rgba(255, 107, 157, 0.3);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 3px dashed var(--ink);
+}
+
+.btnCancel {
+  padding: 14px 28px;
+  border-radius: 20px;
+  background-color: #fff;
+  border: 2.5px solid var(--ink);
+  font-weight: 800;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: all 0.2s;
+}
+
+.btnCancel:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.btnSubmit {
+  padding: 14px 32px;
+  border-radius: 20px;
+  background-color: var(--hot);
+  border: 2.5px solid var(--ink);
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: all 0.2s;
+}
+
+.btnSubmit:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.dataTable th {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: rgba(26, 26, 26, 0.5);
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 16px 20px;
+  border-bottom: 2px dashed rgba(26, 26, 26, 0.2);
+}
+
+.dataTable td {
+  padding: 20px;
+  border-bottom: 1px solid rgba(26, 26, 26, 0.05);
+  vertical-align: middle;
+}
+
+.dataTable tr:last-child td {
+  border-bottom: none;
+}
+
+.orderId {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+  display: block;
+}
+
+.orderUuid {
+  font-size: 11px;
+  color: rgba(26, 26, 26, 0.4);
+  font-family: var(--font-mono, monospace);
+  margin-top: 4px;
+}
+
+.tableTag {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 800;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.tagPending {
+  background-color: var(--peach);
+  color: #D35400;
+  border: 2px solid #D35400;
+}
+
+.tagCooking {
+  background-color: var(--lavn);
+  color: #8E44AD;
+  border: 2px solid #8E44AD;
+}
+
+.tagReady {
+  background-color: var(--mint);
+  color: #27AE60;
+  border: 2px solid #27AE60;
+}
+
+.tagCritical {
+  background-color: var(--hot);
+  color: #fff;
+  border: 2px solid var(--ink);
+}
+
+.btnAction {
+  padding: 8px 16px;
+  border-radius: 12px;
+  background-color: #fff;
+  border: 2px solid var(--ink);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+  margin-right: 8px;
+  transition: all 0.2s;
+}
+
+.btnAction:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0 var(--ink);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 8px;
+  margin-top: 40px;
+}
+
+.sectionDesc {
+  font-size: 14px;
+  color: rgba(26, 26, 26, 0.5);
+  margin-bottom: 24px;
+  font-weight: 600;
+}
