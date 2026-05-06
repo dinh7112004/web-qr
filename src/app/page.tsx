@@ -132,6 +132,7 @@ export default function Dashboard() {
         {activeTab === 'trend' && <TrendForecastTab />}
         {activeTab === 'reviews' && <ReviewsTab />}
       </main>
+      <div style={{ position: 'fixed', bottom: 5, right: 5, fontSize: '9px', color: 'rgba(0,0,0,0.1)', zIndex: 9999 }}>API: {API_URL}</div>
     </div>
   );
 }
