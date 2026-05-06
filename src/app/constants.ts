@@ -1,1 +1,1 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://192.168.1.186:3000';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backend-qr-h4th.onrender.com';
