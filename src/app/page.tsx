@@ -44,7 +44,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const currentPendingIds = new Set(orders.filter(o => o.status === 'pending').map(o => o._id));
-    
+
     // Check if there is any new pending order
     let hasNewOrder = false;
     currentPendingIds.forEach(id => {
@@ -57,21 +57,21 @@ export default function Dashboard() {
     if (hasNewOrder && prevPendingIds.current.size > 0) {
       const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
       audio.play().catch(e => console.log('Auto-play prevented by browser:', e));
-      
+
       audio.onended = () => {
         if ('speechSynthesis' in window) {
           const msg = new SpeechSynthesisUtterance('Bạn có một đơn hàng mới');
           msg.lang = 'vi-VN';
           msg.rate = 1.3; // Tăng tốc độ đọc lên nhanh hơn
           msg.pitch = 1.1; // Làm giọng tươi tắn hơn một chút
-          
+
           // Ưu tiên chọn giọng đọc nữ tiếng Việt xịn (nếu trình duyệt có cài sẵn)
           const voices = window.speechSynthesis.getVoices();
           const viVoice = voices.find(v => v.lang.includes('vi') && (v.name.includes('Premium') || v.name.includes('Google') || v.name.includes('Linh')));
           if (viVoice) {
             msg.voice = viVoice;
           }
-          
+
           window.speechSynthesis.speak(msg);
         }
       };
@@ -113,7 +113,7 @@ export default function Dashboard() {
               <p>{headerInfo.sub}</p>
             </div>
             <div className={styles.headerActions}>
-               {activeTab === 'promo' && (
+              {activeTab === 'promo' && (
                 <button className={styles.btnPrimary} onClick={() => setShowPromoModal(true)}>
                   <Icon name="plus" size={16} /> Tạo mã KM
                 </button>
@@ -132,7 +132,6 @@ export default function Dashboard() {
         {activeTab === 'trend' && <TrendForecastTab />}
         {activeTab === 'reviews' && <ReviewsTab />}
       </main>
-      <div style={{ position: 'fixed', bottom: 5, right: 5, fontSize: '9px', color: 'rgba(0,0,0,0.1)', zIndex: 9999 }}>API: {API_URL}</div>
     </div>
   );
 }
