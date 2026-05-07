@@ -34,7 +34,7 @@ html, body {
   font-family: var(--font-body);
   color: var(--ink);
   background-color: var(--bg-main);
-  overflow: hidden;
+  overflow: auto; /* Mở khóa cuộn cho toàn hệ thống */
 }
 
 h1, h2, h3, h4 {

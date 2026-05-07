@@ -21,6 +21,7 @@ export default function Dashboard() {
   const prevPendingIds = useRef<Set<string>>(new Set());
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [showPromoModal, setShowPromoModal] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const fetchOrders = async () => {
     try {
@@ -103,7 +104,22 @@ export default function Dashboard() {
 
   return (
     <div className={styles.container}>
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} pendingOrdersCount={pendingOrdersCount} />
+      <div className={styles.mobileHeader}>
+        <div className={styles.brandInfo}>
+          <h2 style={{ fontSize: '18px', fontWeight: 800 }}>Boba Babe ✨</h2>
+        </div>
+        <button className={styles.menuToggle} onClick={() => setIsSidebarOpen(true)}>
+          <Icon name="menu" size={20} />
+        </button>
+      </div>
+
+      <Sidebar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        pendingOrdersCount={pendingOrdersCount} 
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
 
       <main className={styles.main}>
         {activeTab !== 'menu' && (

@@ -238,14 +238,15 @@ export const OverviewTab = ({ orders: rawOrders = [], onRefresh, autoRefresh = t
       )}
 
       {/* 1. Operational Overview Section */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className={styles.flexResponsive} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h2 className={styles.sectionTitle} style={{ marginTop: 0 }}>Tổng quan vận hành</h2>
           <p className={styles.sectionDesc}>Theo dõi nhanh trạng thái đơn tại cửa hàng hiện tại.</p>
         </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div className={styles.flexResponsive} style={{ display: 'flex', gap: '10px' }}>
           <div 
             onClick={onToggleAutoRefresh}
+            className={styles.btnSecondary}
             style={{ 
               backgroundColor: autoRefresh ? 'var(--mint)' : '#ddd', 
               padding: '8px 16px', 
@@ -254,13 +255,14 @@ export const OverviewTab = ({ orders: rawOrders = [], onRefresh, autoRefresh = t
               fontWeight: 800, 
               fontSize: '13px',
               cursor: 'pointer',
-              userSelect: 'none'
+              userSelect: 'none',
+              boxShadow: '2px 2px 0 var(--ink)'
             }}
           >
             Tự làm mới: {autoRefresh ? 'Bật' : 'Tắt'}
           </div>
           <div style={{ padding: '8px 16px', fontWeight: 600, fontSize: '13px', color: 'rgba(26,26,26,0.5)' }}>
-            Lần cập nhật gần nhất: {lastUpdated}
+            Cập nhật: {lastUpdated}
           </div>
         </div>
       </div>
@@ -290,9 +292,9 @@ export const OverviewTab = ({ orders: rawOrders = [], onRefresh, autoRefresh = t
 
       {/* Orders Table */}
       <section className={styles.tableSection}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <div className={styles.flexResponsive} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', gap: '15px' }}>
           {/* LEFT SIDE: Search & Status Filter */}
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div className={styles.flexResponsive} style={{ display: 'flex', gap: '10px', flex: 1 }}>
             <input 
               type="text" 
               className={styles.formInput} 
@@ -317,7 +319,7 @@ export const OverviewTab = ({ orders: rawOrders = [], onRefresh, autoRefresh = t
           </div>
 
           {/* RIGHT SIDE: Date Filter */}
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div className={styles.flexResponsive} style={{ display: 'flex', gap: '10px' }}>
             <select 
               className={styles.formSelect} 
               style={{ padding: '10px', width: '140px' }}
@@ -352,7 +354,8 @@ export const OverviewTab = ({ orders: rawOrders = [], onRefresh, autoRefresh = t
           </div>
         </div>
 
-        <table className={styles.dataTable}>
+        <div className={styles.tableWrapper}>
+          <table className={styles.dataTable}>
           <thead>
             <tr>
               <th>Mã Đơn</th>
@@ -420,6 +423,7 @@ export const OverviewTab = ({ orders: rawOrders = [], onRefresh, autoRefresh = t
             ))}
           </tbody>
         </table>
+        </div>
         <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'rgba(26,26,26,0.5)', fontWeight: 600 }}>
           <span>Tổng {orders.length} bản ghi</span>
           <span>Trang 1/1</span>
@@ -455,8 +459,8 @@ export const OverviewTab = ({ orders: rawOrders = [], onRefresh, autoRefresh = t
 
       {/* SLA Table */}
       <section className={styles.tableSection}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-          <div style={{ display: 'flex', gap: '10px' }}>
+        <div className={styles.flexResponsive} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', gap: '15px' }}>
+          <div className={styles.flexResponsive} style={{ display: 'flex', gap: '10px', flex: 1 }}>
             <select 
               className={styles.formSelect} 
               style={{ width: '200px', padding: '10px' }}
@@ -476,10 +480,11 @@ export const OverviewTab = ({ orders: rawOrders = [], onRefresh, autoRefresh = t
               onChange={(e) => setSlaSearchQuery(e.target.value)}
             />
           </div>
-          <button className={styles.btnSecondary} onClick={() => onRefresh?.()} style={{ padding: '10px 20px' }}>Tải lại cảnh báo 🔄</button>
+          <button className={styles.btnSecondary} onClick={() => onRefresh?.()} style={{ padding: '10px 20px' }}>Tải lại 🔄</button>
         </div>
 
-        <table className={styles.dataTable}>
+        <div className={styles.tableWrapper}>
+          <table className={styles.dataTable}>
           <thead>
             <tr>
               <th>Mức độ</th>
@@ -529,11 +534,12 @@ export const OverviewTab = ({ orders: rawOrders = [], onRefresh, autoRefresh = t
             ))}
           </tbody>
         </table>
-        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'rgba(26,26,26,0.5)', fontWeight: 600 }}>
-          <span>Tổng {totalSlas} bản ghi · 10 bản ghi/trang</span>
-          <span>Trước · Trang 1/1 · Sau</span>
-        </div>
-      </section>
+      </div>
+      <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'rgba(26,26,26,0.5)', fontWeight: 600 }}>
+        <span>Tổng {totalSlas} bản ghi · 10 bản ghi/trang</span>
+        <span>Trước · Trang 1/1 · Sau</span>
+      </div>
+    </section>
     </>
   );
 };

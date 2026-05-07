@@ -88,8 +88,8 @@ export const OrdersTab = ({ orders = [] }: { orders?: any[] }) => {
       )}
 
       {/* Filters & Search */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', gap: '20px' }}>
-        <div style={{ display: 'flex', gap: '10px', flex: 1 }}>
+      <div className={styles.flexResponsive} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', gap: '20px' }}>
+        <div className={styles.flexResponsive} style={{ display: 'flex', gap: '10px', flex: 1 }}>
           <input 
             type="text" 
             className={styles.formInput} 
@@ -119,8 +119,9 @@ export const OrdersTab = ({ orders = [] }: { orders?: any[] }) => {
         </div>
       </div>
 
-      {/* Orders Data Table */}
-      <table className={styles.dataTable}>
+      {/* Orders Data Table Wrapped */}
+      <div className={styles.tableWrapper}>
+        <table className={styles.dataTable}>
         <thead>
           <tr>
             <th>Mã Đơn</th>
@@ -166,6 +167,7 @@ export const OrdersTab = ({ orders = [] }: { orders?: any[] }) => {
           })}
         </tbody>
       </table>
+      </div>
     </section>
   );
 };

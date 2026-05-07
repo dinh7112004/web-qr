@@ -203,7 +203,7 @@ export const MenuTab = () => {
     setNewItem({ name: '', price: '', category: 'tea', desc: '', image: '', tags: '', status: 'active' });
   };
 
-  if (loading) return <div style={{ padding: '40px' }}>Đang tải menu...</div>;
+  // if (loading) return <div style={{ padding: '40px' }}>Đang tải menu...</div>;
 
   const formLabelStyle = { display: 'block', marginBottom: '8px', fontWeight: 'bold', fontSize: '14px', color: 'var(--ink)' };
   const formInputStyle = { width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ccc', marginBottom: '16px', fontSize: '14px' };
@@ -306,14 +306,16 @@ export const MenuTab = () => {
       </div>
 
       <section className={styles.tableSection}>
-        <div className={styles.tableHeader} style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-            <h2 style={{ margin: 0 }}>Danh mục: {categoryNames[selectedCategory] || selectedCategory} ({displayedItems.length} món)</h2>
-            <div className={styles.searchBar}>
-              <Icon name="search" size={16} color="rgba(26,26,26,0.3)" />
-              <input type="text" placeholder="Tìm món..." />
-            </div>
+        <div className={styles.flexResponsive} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', alignItems: 'flex-start', gap: '16px' }}>
+          <div style={{ flex: 1 }}>
+            <h2 style={{ margin: 0, fontSize: '20px' }}>Danh mục: {categoryNames[selectedCategory] || selectedCategory}</h2>
+            <p style={{ margin: '4px 0 0 0', opacity: 0.5, fontSize: '13px', fontWeight: 'bold' }}>{displayedItems.length} món đang hiển thị</p>
           </div>
+          <div className={styles.searchBar} style={{ maxWidth: '300px' }}>
+            <Icon name="search" size={16} color="rgba(26,26,26,0.3)" />
+            <input type="text" placeholder="Tìm tên món..." style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', padding: '8px' }} />
+          </div>
+        </div>
           <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', width: '100%', paddingBottom: '8px' }}>
             {categories.map(cat => (
               <button 
@@ -333,7 +335,6 @@ export const MenuTab = () => {
               </button>
             ))}
           </div>
-        </div>
 
         {showAddForm && (
           <div className={styles.modalOverlay}>
@@ -404,31 +405,36 @@ export const MenuTab = () => {
           {displayedItems.map((item) => (
             <div key={item.id} className={styles.menuItem}>
               <img src={item.image} alt={item.name} className={styles.itemImage} />
+              
               <div className={styles.itemInfo}>
                 <div className={styles.itemNameRow}>
                   <span className={styles.itemName} style={{ textDecoration: item.isActive ? 'none' : 'line-through', opacity: item.isActive ? 1 : 0.5 }}>{item.name}</span>
                   {item.badge && (
-                    <span className={styles.itemBadge} style={{ backgroundColor: item.isActive ? item.badgeColor : '#ccc', color: item.badge === 'HOT' || item.badge === 'SALE' ? '#fff' : 'var(--ink)' }}>
+                    <span className={styles.itemBadge} style={{ backgroundColor: item.isActive ? item.badgeColor : '#ccc', color: (item.badge === 'HOT' || item.badge === 'SALE' || item.badge === 'BEST') ? '#fff' : 'var(--ink)' }}>
                       {item.badge}
                     </span>
                   )}
                 </div>
-                <div className={styles.itemSub} style={{ opacity: item.isActive ? 1 : 0.5 }}>{item.sub}</div>
-              </div>
-              <div className={styles.itemPrice} style={{ opacity: item.isActive ? 1 : 0.5, color: 'var(--hot)', fontWeight: 800, fontSize: '18px' }}>{item.price}</div>
-              <div className={styles.itemSales} style={{ marginRight: '20px', opacity: item.isActive ? 1 : 0.5, textAlign: 'center' }}>
-                <div className={styles.salesLabel} style={{ fontSize: '12px', color: 'rgba(26,26,26,0.5)', fontWeight: 800 }}>Bán</div>
-                <div className={styles.salesValue} style={{ fontSize: '16px', fontWeight: 800 }}>{item.sales}</div>
-              </div>
-              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                <div className={styles.toggle} onClick={() => toggleItem(item.id, item.isActive)} style={{ backgroundColor: item.isActive ? 'var(--mint)' : '#ddd' }} title="Bật/Tắt hiển thị">
-                  <div className={styles.toggleCircle} style={{ left: item.isActive ? 'calc(100% - 20px)' : '2px', transition: 'left 0.2s' }}></div>
+                <div className={styles.itemSub} style={{ opacity: item.isActive ? 0.7 : 0.4 }}>{item.sub}</div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '8px' }}>
+                  <div className={styles.itemPrice} style={{ opacity: item.isActive ? 1 : 0.5 }}>{item.price}</div>
+                  <div className={styles.itemSales} style={{ opacity: item.isActive ? 1 : 0.5 }}>
+                    <span className={styles.salesLabel}>Đã bán</span>
+                    <span className={styles.salesValue}>{item.sales}</span>
+                  </div>
                 </div>
-                <button onClick={() => handleEditItemClick(item)} style={{ backgroundColor: '#fff', border: '2px solid var(--ink)', borderRadius: '10px', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', cursor: 'pointer' }} title="Sửa món">
+              </div>
+
+              <div className={styles.itemActions} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <div className={styles.toggle} onClick={() => toggleItem(item.id, item.isActive)} style={{ backgroundColor: item.isActive ? 'var(--mint)' : '#ddd', width: '44px', height: '24px' }} title="Bật/Tắt">
+                  <div className={styles.toggleCircle} style={{ width: '18px', height: '18px', left: item.isActive ? 'calc(100% - 20px)' : '2px', transition: 'left 0.2s' }}></div>
+                </div>
+                <button onClick={() => handleEditItemClick(item)} style={{ backgroundColor: '#fff', border: '2px solid var(--ink)', borderRadius: '10px', padding: '6px 12px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '2px 2px 0 var(--ink)' }}>
                   Sửa
                 </button>
-                <button onClick={() => deleteItem(item.id)} style={{ backgroundColor: '#fff', border: '2px solid var(--ink)', borderRadius: '10px', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', cursor: 'pointer' }} title="Xoá món">
-                  Xóa
+                <button onClick={() => deleteItem(item.id)} style={{ backgroundColor: '#fff', border: '2px solid var(--ink)', borderRadius: '10px', padding: '6px 10px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '2px 2px 0 var(--ink)' }}>
+                  X
                 </button>
               </div>
             </div>
