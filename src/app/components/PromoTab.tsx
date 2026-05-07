@@ -6,15 +6,21 @@ export const PromoTab = ({ showModalOverride, onHide }: { showModalOverride?: bo
   const [vouchers, setVouchers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [editingVoucherId, setEditingVoucherId] = useState<string | null>(null);
 
   useEffect(() => {
     if (showModalOverride !== undefined) {
+      if (showModalOverride) {
+        setEditingVoucherId(null);
+        setFormData({ code: '', title: '', description: '', discountType: 'percentage', discountValue: '', minOrderValue: '', minOrdersRequired: '', pointCost: '', isHidden: false });
+      }
       setShowModal(showModalOverride);
     }
   }, [showModalOverride]);
 
   const closeModal = () => {
     setShowModal(false);
+    setEditingVoucherId(null);
     if (onHide) onHide();
   };
   const [formData, setFormData] = useState({
@@ -25,6 +31,7 @@ export const PromoTab = ({ showModalOverride, onHide }: { showModalOverride?: bo
     discountValue: '',
     minOrderValue: '',
     minOrdersRequired: '',
+    pointCost: '',
     isHidden: false
   });
 
@@ -58,15 +65,45 @@ export const PromoTab = ({ showModalOverride, onHide }: { showModalOverride?: bo
     }
   };
 
-  const handleCreate = async () => {
+  const handleDelete = async (id: string) => {
+    if (!confirm('Bạn chắc chắn muốn xoá mã này chứ? 🥺')) return;
+    try {
+      await fetch(`${API_URL}/merchant/vouchers/${id}/delete`, { method: 'POST' });
+      fetchVouchers();
+    } catch (err) {
+      console.error(err);
+      alert('Lỗi khi xoá khuyến mãi');
+    }
+  };
+
+  const handleEdit = (v: any) => {
+    setEditingVoucherId(v._id);
+    setFormData({
+      code: v.code,
+      title: v.title,
+      description: v.description || '',
+      discountType: v.discountType,
+      discountValue: v.discountValue.toString(),
+      minOrderValue: v.minOrderValue?.toString() || '',
+      minOrdersRequired: v.minOrdersRequired?.toString() || '',
+      pointCost: v.pointCost?.toString() || '',
+      isHidden: v.isHidden || false
+    });
+    setShowModal(true);
+  };
+
+  const handleSave = async () => {
     if (!formData.code || !formData.title || !formData.discountValue) {
       alert('Vui lòng nhập đủ thông tin bắt buộc');
       return;
     }
     
     try {
-      await fetch(`${API_URL}/merchant/vouchers`, {
-        method: 'POST',
+      const url = editingVoucherId ? `${API_URL}/merchant/vouchers/${editingVoucherId}` : `${API_URL}/merchant/vouchers`;
+      const method = editingVoucherId ? 'PATCH' : 'POST';
+
+      await fetch(url, {
+        method: method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
@@ -74,15 +111,16 @@ export const PromoTab = ({ showModalOverride, onHide }: { showModalOverride?: bo
           discountValue: Number(formData.discountValue),
           minOrderValue: Number(formData.minOrderValue) || 0,
           minOrdersRequired: Number(formData.minOrdersRequired) || 0,
+          pointCost: Number(formData.pointCost) || 0,
           isHidden: formData.isHidden
         })
       });
       closeModal();
-      setFormData({ code: '', title: '', description: '', discountType: 'percentage', discountValue: '', minOrderValue: '', minOrdersRequired: '', isHidden: false });
+      setFormData({ code: '', title: '', description: '', discountType: 'percentage', discountValue: '', minOrderValue: '', minOrdersRequired: '', pointCost: '', isHidden: false });
       fetchVouchers();
     } catch (err) {
       console.error(err);
-      alert('Lỗi khi tạo khuyến mãi');
+      alert('Lỗi khi lưu khuyến mãi');
     }
   };
 
@@ -121,37 +159,71 @@ export const PromoTab = ({ showModalOverride, onHide }: { showModalOverride?: bo
                     💎 Mở khóa sau: {v.minOrdersRequired} đơn hàng
                   </div>
                 )}
+                {v.pointCost > 0 && (
+                  <div style={{ fontSize: '12px', marginTop: '4px', color: '#8E44AD', fontWeight: 'bold' }}>
+                    ✨ Đổi bằng điểm: {v.pointCost.toLocaleString()} điểm
+                  </div>
+                )}
               </div>
               <div className={styles.itemSales} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' }}>
                 <div style={{ textAlign: 'right' }}>
                   <div className={styles.salesLabel}>Đã dùng</div>
                   <div className={styles.salesValue}>{v.usageCount || 0}</div>
                 </div>
-                <button 
-                  onClick={() => handleToggle(v._id, v.isActive)}
-                  style={{ 
-                    padding: '6px 12px', 
-                    borderRadius: '6px', 
-                    border: 'none', 
-                    backgroundColor: v.isActive ? '#ddd' : 'var(--mint)', 
-                    color: v.isActive ? 'var(--ink)' : '#fff',
-                    fontWeight: 'bold',
-                    cursor: 'pointer'
-                  }}
-                >
-                  {v.isActive ? 'Tạm dừng' : 'Kích hoạt'}
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button 
+                    onClick={() => handleToggle(v._id, v.isActive)}
+                    style={{ 
+                      padding: '6px 12px', 
+                      borderRadius: '6px', 
+                      border: 'none', 
+                      backgroundColor: v.isActive ? '#ddd' : 'var(--mint)', 
+                      color: v.isActive ? 'var(--ink)' : '#fff',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {v.isActive ? 'Tạm dừng' : 'Kích hoạt'}
+                  </button>
+                  <button 
+                    onClick={() => handleEdit(v)}
+                    style={{ 
+                      padding: '6px 12px', 
+                      borderRadius: '6px', 
+                      border: '2px solid var(--ink)', 
+                      backgroundColor: '#fff', 
+                      color: 'var(--ink)',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Sửa
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(v._id)}
+                    style={{ 
+                      padding: '6px 12px', 
+                      borderRadius: '6px', 
+                      border: '2px solid var(--ink)', 
+                      backgroundColor: '#fff', 
+                      color: 'var(--hot)',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Xoá
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Create Modal */}
       {showModal && (
         <div className={styles.modalOverlay} style={{ zIndex: 100 }}>
           <div className={styles.modalContent} style={{ maxWidth: '500px' }}>
-            <h3 style={{ marginTop: 0 }}>Tạo Khuyến Mãi Mới</h3>
+            <h3 style={{ marginTop: 0 }}>{editingVoucherId ? 'Cập Nhật Khuyến Mãi' : 'Tạo Khuyến Mãi Mới'}</h3>
             
             <div className={styles.formGroup}>
               <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '13px' }}>Mã Khuyến Mãi (Code)*</label>
@@ -211,15 +283,26 @@ export const PromoTab = ({ showModalOverride, onHide }: { showModalOverride?: bo
                 />
               </div>
               <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '13px' }}>Số đơn để mở khóa (Loyalty)</label>
+                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '13px' }}>Đổi bằng điểm (Point Cost)</label>
                 <input 
                   type="number" 
                   className={styles.formInput} 
-                  placeholder="VD: 20" 
-                  value={formData.minOrdersRequired}
-                  onChange={e => setFormData({...formData, minOrdersRequired: e.target.value})}
+                  placeholder="VD: 5000" 
+                  value={formData.pointCost}
+                  onChange={e => setFormData({...formData, pointCost: e.target.value})}
                 />
               </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '13px' }}>Số đơn để mở khóa (Milestone)</label>
+              <input 
+                type="number" 
+                className={styles.formInput} 
+                placeholder="VD: 20" 
+                value={formData.minOrdersRequired}
+                onChange={e => setFormData({...formData, minOrdersRequired: e.target.value})}
+              />
             </div>
 
             <div className={styles.formGroup}>
@@ -248,7 +331,7 @@ export const PromoTab = ({ showModalOverride, onHide }: { showModalOverride?: bo
 
             <div className={styles.modalActions}>
               <button className={styles.btnCancel} onClick={closeModal} style={{ borderRadius: '8px', padding: '10px 20px', border: '1px solid #ccc', backgroundColor: '#fff', fontWeight: 'bold' }}>Hủy</button>
-              <button className={styles.btnSubmit} onClick={handleCreate} style={{ borderRadius: '8px', padding: '10px 20px', backgroundColor: '#D35400', color: '#fff', fontWeight: 'bold', border: 'none' }}>Lưu khuyến mãi</button>
+              <button className={styles.btnSubmit} onClick={handleSave} style={{ borderRadius: '8px', padding: '10px 20px', backgroundColor: '#D35400', color: '#fff', fontWeight: 'bold', border: 'none' }}>{editingVoucherId ? 'Cập nhật' : 'Lưu khuyến mãi'}</button>
             </div>
           </div>
         </div>
