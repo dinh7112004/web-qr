@@ -25,10 +25,30 @@ export const OverviewTab = ({ orders: rawOrders = [], onRefresh, autoRefresh = t
   const [slaSearchQuery, setSlaSearchQuery] = useState<string>('');
 
   useEffect(() => {
-    setLastUpdated(new Date().toLocaleTimeString('vi-VN'));
-    setSelectedDate(new Date().toISOString().split('T')[0]);
-    setSelectedMonth(new Date().toISOString().slice(0, 7));
+    const now = new Date();
+    setLastUpdated(now.toLocaleTimeString('vi-VN'));
+    
+    // Get local YYYY-MM-DD
+    const localDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+    const localMonth = localDate.slice(0, 7);
+    
+    setSelectedDate(localDate);
+    setSelectedMonth(localMonth);
   }, []);
+
+  // Tự động chuyển ngày nếu để màn hình qua đêm
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const interval = setInterval(() => {
+      const now = new Date();
+      const localDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+      if (localDate !== selectedDate) {
+        setSelectedDate(localDate);
+        setSelectedMonth(localDate.slice(0, 7));
+      }
+    }, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, [autoRefresh, selectedDate]);
 
   useEffect(() => {
     if (rawOrders.length > 0) {

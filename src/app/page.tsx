@@ -16,7 +16,24 @@ import { ReviewsTab } from './components/ReviewsTab';
 import { Icon } from './components/Icon';
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Restore tab on load
+  useEffect(() => {
+    const savedTab = localStorage.getItem('activeTab');
+    if (savedTab) {
+      setActiveTab(savedTab);
+    }
+    setIsInitialized(true);
+  }, []);
+
+  // Persist tab on change
+  useEffect(() => {
+    if (isInitialized) {
+      localStorage.setItem('activeTab', activeTab);
+    }
+  }, [activeTab, isInitialized]);
   const [orders, setOrders] = useState<any[]>([]);
   const prevPendingIds = useRef<Set<string>>(new Set());
   const [autoRefresh, setAutoRefresh] = useState(true);
@@ -101,6 +118,12 @@ export default function Dashboard() {
   const headerInfo = getHeaderInfo();
 
   const pendingOrdersCount = orders.filter(o => o.status === 'pending' || o.status === 'checking_out').length;
+
+  if (!isInitialized) {
+    return <div style={{ backgroundColor: 'var(--paper)', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <div style={{ color: 'var(--ink)', fontSize: '18px', fontWeight: 'bold' }}>Loading Boba Babe... 🧋</div>
+    </div>;
+  }
 
   return (
     <div className={styles.container}>

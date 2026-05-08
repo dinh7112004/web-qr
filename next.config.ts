@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     ],
   },
   // turbopack: {
-  //   root: path.resolve(process.cwd()),
+  //   root: path.resolve(__dirname),
   // },
 };
 
