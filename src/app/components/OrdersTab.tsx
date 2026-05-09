@@ -1,10 +1,30 @@
 import React, { useState } from 'react';
 import styles from '../page.module.css';
+import { motion } from 'framer-motion';
+import { API_URL } from '../constants';
 
-export const OrdersTab = ({ orders = [] }: { orders?: any[] }) => {
+const BlinkingDot = () => (
+  <motion.span
+    animate={{ opacity: [1, 0.4, 1], scale: [1, 1.2, 1] }}
+    transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+    style={{
+      display: 'inline-block',
+      width: '10px',
+      height: '10px',
+      backgroundColor: '#FF4D6D',
+      borderRadius: '50%',
+      marginRight: '8px',
+      boxShadow: '0 0 10px rgba(255, 77, 141, 0.5)'
+    }}
+  />
+);
+
+export const OrdersTab = ({ orders = [], onRefresh }: { orders?: any[], onRefresh?: () => void }) => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [editModal, setEditModal] = useState({ show: false, orderId: '', status: '', note: '' });
+  const [confirmModal, setConfirmModal] = useState({ show: false, order: null as any, nextStatus: '', label: '' });
 
   const getStatusInfo = (status: string) => {
     switch (status) {
@@ -19,6 +39,23 @@ export const OrdersTab = ({ orders = [] }: { orders?: any[] }) => {
     }
   };
 
+  const updateOrderStatus = async (orderId: string, status: string, note: string = '') => {
+    try {
+      const res = await fetch(`${API_URL}/merchant/orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, note })
+      });
+      if (res.ok) {
+        onRefresh?.();
+        setEditModal({ show: false, orderId: '', status: '', note: '' });
+        setConfirmModal({ show: false, order: null, nextStatus: '', label: '' });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const filteredOrders = orders.filter(o => {
     const matchesStatus = filterStatus === 'all' || o.status === filterStatus;
     const matchesSearch = 
@@ -30,6 +67,58 @@ export const OrdersTab = ({ orders = [] }: { orders?: any[] }) => {
 
   return (
     <section className={styles.tableSection}>
+      {/* Confirm Action Modal (From Overview) */}
+      {confirmModal.show && confirmModal.order && (
+        <div className={styles.modalOverlay} style={{ zIndex: 1100 }}>
+          <div className={styles.modalContent} style={{ maxWidth: '400px', padding: '24px' }}>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '18px', color: 'var(--ink)' }}>Đánh dấu {confirmModal.label.toLowerCase()}?</h3>
+            <p style={{ margin: '0 0 24px 0', fontSize: '14px', color: 'rgba(26,26,26,0.6)', lineHeight: '1.5' }}>
+              Đơn {confirmModal.order.orderId} sẽ chuyển sang trạng thái &quot;{confirmModal.label}&quot;.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button className={styles.btnCancel} onClick={() => setConfirmModal({ show: false, order: null, nextStatus: '', label: '' })} style={{ borderRadius: '8px', padding: '8px 16px', border: '1px solid #ccc', backgroundColor: '#fff', fontWeight: 'bold' }}>Hủy</button>
+              <button className={styles.btnSubmit} onClick={() => updateOrderStatus(confirmModal.order.orderId, confirmModal.nextStatus)} style={{ borderRadius: '8px', padding: '8px 16px', backgroundColor: '#2962FF', color: '#fff', fontWeight: 'bold', border: 'none' }}>Xác nhận</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Status Modal (From Overview) */}
+      {editModal.show && (
+        <div className={styles.modalOverlay} style={{ zIndex: 1050 }}>
+          <div className={styles.modalContent} style={{ maxWidth: '500px' }}>
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>Cập nhật trạng thái</label>
+              <select 
+                className={styles.formSelect} 
+                value={editModal.status} 
+                onChange={e => setEditModal({...editModal, status: e.target.value})}
+              >
+                <option value="pending">Chờ xử lý / Mới</option>
+                <option value="confirmed">Đã nhận</option>
+                <option value="preparing">Đang pha</option>
+                <option value="ready">Sẵn sàng / Chờ lấy</option>
+                <option value="completed">Đã phục vụ / Hoàn thành</option>
+                <option value="cancelled">Đã hủy</option>
+              </select>
+            </div>
+            <div className={styles.formGroup}>
+              <textarea 
+                rows={4} 
+                className={styles.formTextarea} 
+                placeholder="Ghi chú nội bộ cho lần cập nhật trạng thái..." 
+                value={editModal.note}
+                onChange={e => setEditModal({...editModal, note: e.target.value})}
+              ></textarea>
+            </div>
+            <div className={styles.modalActions}>
+              <button className={styles.btnCancel} onClick={() => setEditModal({ show: false, orderId: '', status: '', note: '' })} style={{ borderRadius: '8px', padding: '10px 20px', border: '1px solid #ccc', backgroundColor: '#fff', fontWeight: 'bold' }}>Hủy</button>
+              <button className={styles.btnSubmit} onClick={() => updateOrderStatus(editModal.orderId, editModal.status, editModal.note)} style={{ borderRadius: '8px', padding: '10px 20px', backgroundColor: '#D35400', color: '#fff', fontWeight: 'bold', border: 'none' }}>Lưu trạng thái</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Detail Modal */}
       {selectedOrder && (
         <div className={styles.modalOverlay} onClick={() => setSelectedOrder(null)}>
@@ -71,11 +160,6 @@ export const OrdersTab = ({ orders = [] }: { orders?: any[] }) => {
                   <span style={{ fontWeight: 'bold' }}>TỔNG CỘNG</span>
                   <span style={{ fontWeight: 'bold', color: 'var(--hot)', fontSize: '18px' }}>{(selectedOrder.total || 0).toLocaleString('vi-VN')}đ</span>
                 </div>
-              </div>
-
-              <div style={{ marginTop: '20px' }}>
-                <p style={{ margin: '0 0 5px 0', opacity: 0.5, fontSize: '12px', fontWeight: 'bold' }}>GHI CHÚ</p>
-                <p style={{ margin: 0, fontStyle: 'italic' }}>&quot;{selectedOrder.note || 'Không có ghi chú nào'}&quot;</p>
               </div>
             </div>
 
@@ -127,40 +211,119 @@ export const OrdersTab = ({ orders = [] }: { orders?: any[] }) => {
             <th>Mã Đơn</th>
             <th>Thời gian</th>
             <th>Bàn</th>
-            <th>Khách hàng</th>
+            <th>Khách</th>
+            <th>Món chọn</th>
             <th>Trạng thái</th>
             <th>Tổng tiền</th>
-            <th>Hành động</th>
+            <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>
           {filteredOrders.length === 0 ? (
             <tr>
-              <td colSpan={7} style={{ textAlign: 'center', padding: '50px', opacity: 0.5 }}>
+              <td colSpan={8} style={{ textAlign: 'center', padding: '50px', opacity: 0.5 }}>
                 Không tìm thấy đơn hàng nào phù hợp 🥺
               </td>
             </tr>
           ) : filteredOrders.map((o) => {
             const status = getStatusInfo(o.status);
+            const elapsed = (new Date().getTime() - new Date(o.createdAt).getTime()) / (60 * 1000);
+            const isOverdue = ['pending', 'confirmed', 'preparing'].includes(o.status) && elapsed > 10;
+
             return (
-              <tr key={o._id}>
-                <td style={{ fontWeight: 'bold' }}>{o.orderId}</td>
-                <td style={{ fontSize: '13px' }}>{new Date(o.createdAt).toLocaleTimeString('vi-VN')}</td>
-                <td style={{ fontWeight: 'bold' }}>{o.tableCode || 'Takeaway'}</td>
-                <td>{o.customerName || 'Khách vãng lai'}</td>
+              <tr key={o._id} onClick={() => setSelectedOrder(o)} style={{ cursor: 'pointer' }}>
+                <td>
+                  <span className={styles.orderId} style={{ display: 'flex', alignItems: 'center' }}>
+                    {isOverdue && <BlinkingDot />}
+                    {o.orderId}
+                  </span>
+                  <span className={styles.orderUuid}>{o._id}</span>
+                </td>
+                <td style={{ fontSize: '13px', fontWeight: 600 }}>
+                  <div>{new Date(o.createdAt).toLocaleDateString('vi-VN')}</div>
+                  <div style={{ color: 'var(--ink)', opacity: 0.5 }}>{new Date(o.createdAt).toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'})}</div>
+                </td>
+                <td style={{ fontWeight: 800 }}>{o.tableCode || 'Takeaway'}</td>
+                <td style={{ fontWeight: 600 }}>{o.customerName || 'Khách vãng lai'}</td>
+                <td>
+                  {o.items?.map((item: any, idx: number) => (
+                    <div key={idx} style={{ marginBottom: '5px' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 'bold' }}>{item.quantity}x {item.name}</div>
+                      {item.size && <div style={{ fontSize: '11px', color: 'var(--hot)' }}>Size: {item.size === 'x' ? 'XXL' : item.size === 'v' ? 'Vừa' : 'Mini'}</div>}
+                      {item.toppings?.length > 0 && (
+                        <div style={{ fontSize: '11px', color: 'var(--hot)', fontWeight: 'bold' }}>
+                          + {item.toppings.join(', ')}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </td>
                 <td>
                   <span className={`${styles.tableTag} ${status.class}`}>{status.text}</span>
                 </td>
-                <td style={{ fontWeight: 'bold', color: 'var(--hot)' }}>
-                  {(o.total || 0).toLocaleString('vi-VN')}đ
+                <td style={{ fontWeight: 800, color: 'var(--hot)' }}>
+                  {(o.total || 0).toLocaleString('vi-VN')} ₫
                 </td>
                 <td>
-                  <button 
-                    className={styles.btnAction} 
-                    onClick={() => setSelectedOrder(o)}
-                  >
-                    Chi tiết
-                  </button>
+                  {['completed', 'cancelled'].includes(o.status) ? (
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(26,26,26,0.4)' }}>
+                      {o.status === 'completed' ? '✨ Xong' : '❌ Đã huỷ'}
+                    </span>
+                  ) : (
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button 
+                        className={styles.btnAction} 
+                        onClick={(e) => { e.stopPropagation(); setEditModal({ show: true, orderId: o.orderId, status: o.status, note: '' }); }}
+                      >
+                        Sửa
+                      </button>
+                      {o.status === 'pending' && (
+                        <button 
+                          className={styles.btnAction} 
+                          style={{ backgroundColor: 'var(--mint)' }}
+                          onClick={(e) => { e.stopPropagation(); setConfirmModal({ show: true, order: o, nextStatus: 'confirmed', label: 'Đã nhận' }); }}
+                        >
+                          Nhận đơn
+                        </button>
+                      )}
+                      {o.status === 'confirmed' && (
+                        <button 
+                          className={styles.btnAction} 
+                          style={{ backgroundColor: 'var(--lavn)' }}
+                          onClick={(e) => { e.stopPropagation(); setConfirmModal({ show: true, order: o, nextStatus: 'preparing', label: 'Đang pha' }); }}
+                        >
+                          Đang pha
+                        </button>
+                      )}
+                      {o.status === 'preparing' && (
+                        <button 
+                          className={styles.btnAction} 
+                          style={{ backgroundColor: 'var(--peach)' }}
+                          onClick={(e) => { e.stopPropagation(); setConfirmModal({ show: true, order: o, nextStatus: 'ready', label: 'Sẵn sàng' }); }}
+                        >
+                          Sẵn sàng
+                        </button>
+                      )}
+                      {o.status === 'ready' && (
+                        <button 
+                          className={styles.btnAction} 
+                          style={{ backgroundColor: 'var(--hot)', color: '#fff' }}
+                          onClick={(e) => { e.stopPropagation(); setConfirmModal({ show: true, order: o, nextStatus: 'completed', label: 'Hoàn thành' }); }}
+                        >
+                          Giao xong
+                        </button>
+                      )}
+                      {o.status === 'checking_out' && (
+                        <button 
+                          className={styles.btnAction} 
+                          style={{ backgroundColor: 'var(--ink)', color: '#fff' }}
+                          onClick={(e) => { e.stopPropagation(); setConfirmModal({ show: true, order: o, nextStatus: 'completed', label: 'Đã dọn xong' }); }}
+                        >
+                          Dọn xong
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </td>
               </tr>
             );

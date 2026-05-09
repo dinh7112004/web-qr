@@ -11,7 +11,7 @@ import { TablesTab } from './components/TablesTab';
 import { KitchenTab } from './components/KitchenTab';
 import { PromoTab } from './components/PromoTab';
 import { BotLogsTab } from './components/BotLogsTab';
-import { TrendForecastTab } from './components/TrendForecastTab';
+import TrendForecastTab from './components/TrendForecastTab';
 import { ReviewsTab } from './components/ReviewsTab';
 import { Icon } from './components/Icon';
 
@@ -40,6 +40,7 @@ export default function Dashboard() {
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const [aiData, setAiData] = useState<{ insights: any[], logs: any[] }>({ insights: [], logs: [] });
   const fetchOrders = async () => {
     try {
       const res = await fetch(`${API_URL}/merchant/orders?storeId=store-genz-01`);
@@ -52,10 +53,24 @@ export default function Dashboard() {
     }
   };
 
+  const fetchAiData = async () => {
+    try {
+      const res = await fetch(`${API_URL}/ai/dashboard`);
+      const data = await res.json();
+      setAiData(data);
+    } catch (err) {
+      console.error('AI Data fetch failed:', err);
+    }
+  };
+
   useEffect(() => {
     fetchOrders();
+    fetchAiData();
     if (autoRefresh) {
-      const interval = setInterval(fetchOrders, 5000);
+      const interval = setInterval(() => {
+        fetchOrders();
+        fetchAiData();
+      }, 5000);
       return () => clearInterval(interval);
     }
   }, [autoRefresh]);
@@ -162,13 +177,13 @@ export default function Dashboard() {
         )}
 
         {activeTab === 'overview' && <OverviewTab orders={orders} onRefresh={() => fetchOrders()} autoRefresh={autoRefresh} onToggleAutoRefresh={() => setAutoRefresh(!autoRefresh)} />}
-        {activeTab === 'menu' && <MenuTab />}
-        {activeTab === 'orders' && <OrdersTab orders={orders} />}
+        {activeTab === 'menu' && <MenuTab insights={aiData.insights} logs={aiData.logs} />}
+        {activeTab === 'orders' && <OrdersTab orders={orders} onRefresh={() => fetchOrders()} />}
         {activeTab === 'tables' && <TablesTab orders={orders} />}
         {activeTab === 'kitchen' && <KitchenTab orders={orders} onRefresh={() => fetchOrders()} />}
         {activeTab === 'promo' && <PromoTab showModalOverride={showPromoModal} onHide={() => setShowPromoModal(false)} />}
-        {activeTab === 'botlogs' && <BotLogsTab />}
-        {activeTab === 'trend' && <TrendForecastTab />}
+        {activeTab === 'botlogs' && <BotLogsTab logs={aiData.logs} />}
+        {activeTab === 'trend' && <TrendForecastTab insights={aiData.insights} onTabChange={setActiveTab} />}
         {activeTab === 'reviews' && <ReviewsTab />}
       </main>
     </div>

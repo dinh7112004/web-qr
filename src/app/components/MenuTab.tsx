@@ -19,8 +19,9 @@ interface MenuItem {
   toppings: string[];
 }
 
-export const MenuTab = () => {
+export const MenuTab = ({ insights = [], logs = [] }: { insights?: any[], logs?: any[] }) => {
   const [items, setItems] = useState<MenuItem[]>([]);
+  // ... (existing state)
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [metrics, setMetrics] = useState({
     scansToday: 0,
@@ -417,23 +418,23 @@ export const MenuTab = () => {
       <section className={styles.statsGrid}>
         <div className={styles.statCard} style={{ backgroundColor: 'var(--peach)' }}>
           <div className={styles.statLabel}>Lượt quét hôm nay</div>
-          <div className={styles.statValue}>{metrics.scansToday}</div>
+          <div className={styles.statValue}>{metrics.scansToday || 0}</div>
           <div className={styles.statTrend} style={{ color: '#D35400' }}>
-            {metrics.scansTrend >= 0 ? '↑' : '↓'} {Math.abs(metrics.scansTrend)}%
+            {metrics.scansTrend > 0 ? `↑ ${metrics.scansTrend}%` : (metrics.scansTrend < 0 ? `↓ ${Math.abs(metrics.scansTrend)}%` : '— ổn định')}
           </div>
         </div>
         <div className={styles.statCard} style={{ backgroundColor: 'var(--mint)' }}>
           <div className={styles.statLabel}>Đơn đã chốt</div>
-          <div className={styles.statValue}>{metrics.completedOrdersToday}</div>
+          <div className={styles.statValue}>{metrics.completedOrdersToday || 0}</div>
           <div className={styles.statTrend} style={{ color: '#27AE60' }}>
-            {metrics.ordersTrend >= 0 ? '↑' : '↓'} {Math.abs(metrics.ordersTrend)}%
+            {metrics.ordersTrend > 0 ? `↑ ${metrics.ordersTrend}%` : (metrics.ordersTrend < 0 ? `↓ ${Math.abs(metrics.ordersTrend)}%` : '— giữ vững')}
           </div>
         </div>
         <div className={styles.statCard} style={{ backgroundColor: 'var(--lavn)' }}>
           <div className={styles.statLabel}>Doanh thu</div>
-          <div className={styles.statValue}>{(metrics.revenueToday / 1000000).toFixed(1)}M</div>
+          <div className={styles.statValue}>{((metrics.revenueToday || 0) / 1000000).toFixed(2)}M</div>
           <div className={styles.statTrend} style={{ color: '#8E44AD' }}>
-            {metrics.revenueTrend >= 0 ? '↑' : '↓'} {Math.abs(metrics.revenueTrend)}%
+            {metrics.revenueTrend > 0 ? `↑ ${metrics.revenueTrend}%` : (metrics.revenueTrend < 0 ? `↓ ${Math.abs(metrics.revenueTrend)}%` : '— tiềm năng')}
           </div>
         </div>
         <div className={styles.statCard} style={{ backgroundColor: 'var(--hot)' }}>
@@ -459,29 +460,90 @@ export const MenuTab = () => {
               +
             </button>
           </div>
-          <div className={styles.statValue} style={{ color: '#fff' }}>{metrics.storyTagsToday}</div>
+          <div className={styles.statValue} style={{ color: '#fff' }}>{metrics.storyTagsToday || 0}</div>
           <div className={styles.statTrend} style={{ color: '#fff' }}>
             {metrics.storyTagsTrend > 0 ? `↑ ${metrics.storyTagsTrend}%` : '📸 viral nhẹ'}
           </div>
         </div>
       </section>
 
-      <div className={styles.insightBanner}>
-        <div className={styles.botIcon}>
-            <Icon name="sparkles" size={24} color="var(--ink)" />
-        </div>
-        <div className={styles.insightText}>
-          <h3>Boba Bot Insight</h3>
-          <p>&quot;Bestie ơi, 32 khách hỏi &apos;matcha có không?&apos; tuần này — mình suggest add món matcha cloud nha!&quot;</p>
-        </div>
-        <button className={styles.btnCreate} onClick={() => {
-          setEditItemId(null);
-          setNewItem({ ...newItem, name: 'Matcha Cloud', price: '45000', desc: 'Vibe Nhật Bản, cực cháy', toppings: 'Trân châu trắng, Kem cheese' });
-          setShowAddForm(true);
-        }}>
-          Tạo món <Icon name="sparkles" size={14} />
-        </button>
-      </div>
+      {/* Dynamic AI Insight Banner */}
+      {(() => {
+        const productInsight = insights.find(ins => ins.category === 'product') || {
+          title: 'Boba Bot Insight',
+          content: 'Đang phân tích nhu cầu khách hàng để đưa ra gợi ý tốt nhất cho bạn... ✨',
+          suggestion: 'Matcha Cloud',
+          actionText: 'Tạo món'
+        };
+
+        return (
+          <div className={styles.insightBanner}>
+            <div className={styles.botIcon}>
+                <Icon name="sparkles" size={24} color="var(--ink)" />
+            </div>
+            <div className={styles.insightText}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <h3>{productInsight.title}</h3>
+                <button 
+                  id="btn-analyze"
+                  onClick={async (e) => {
+                    const btn = e.currentTarget;
+                    const now = Date.now();
+                    const lastRun = Number(localStorage.getItem('lastAiAnalysis') || 0);
+                    
+                    if (now - lastRun < 30000) {
+                      const remain = Math.ceil((30000 - (now - lastRun)) / 1000);
+                      alert(`Bestie đợi xíu nha, AI đang nghỉ ngơi (${remain}s)... ✨`);
+                      return;
+                    }
+
+                    btn.disabled = true;
+                    btn.innerText = 'Đang phân tích...';
+                    try {
+                      await fetch(`${API_URL}/ai/analyze`, { method: 'POST' });
+                      localStorage.setItem('lastAiAnalysis', Date.now().toString());
+                      window.location.reload(); 
+                    } catch (e) {
+                      btn.disabled = false;
+                      btn.innerText = 'Thử lại';
+                    }
+                  }}
+                  style={{
+                    fontSize: '10px',
+                    padding: '2px 8px',
+                    borderRadius: '8px',
+                    border: '1px solid #ccc',
+                    background: '#fff',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Phân tích ngay ⚡️
+                </button>
+              </div>
+              <p>&quot;{productInsight.content}&quot;</p>
+              {logs.length > 0 && (
+                <p style={{ fontSize: '10px', marginTop: '6px', color: 'var(--ink)', opacity: 0.5, fontStyle: 'italic' }}>
+                  {logs[0].text} ({new Date(logs[0].createdAt).toLocaleTimeString('vi-VN')})
+                </p>
+              )}
+            </div>
+            <button className={styles.btnCreate} onClick={() => {
+              setEditItemId(null);
+              setNewItem({ 
+                ...newItem, 
+                name: productInsight.suggestion || 'Món mới', 
+                price: '45000', 
+                desc: 'Món mới theo gợi ý từ AI Bot ✨', 
+                toppings: '',
+                category: 'tea'
+              });
+              setShowAddForm(true);
+            }}>
+              {productInsight.actionText || 'Tạo món'} <Icon name="sparkles" size={14} />
+            </button>
+          </div>
+        );
+      })()}
 
       <section className={styles.tableSection}>
         <div style={{ display: 'flex', gap: '20px', marginBottom: '24px', borderBottom: '2px solid #eee', paddingBottom: '12px' }}>
